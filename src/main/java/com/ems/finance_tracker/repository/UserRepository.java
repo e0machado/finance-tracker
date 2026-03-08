@@ -13,7 +13,7 @@ import java.util.Optional;
  * Handles database persistence operations using Spring Data JPA for optimized
  * and secure queries.
  *
- * @author Evandro Machado <a href="https://github.com/e0machado">Github</a>
+ * @author Evandro Machado
  */
 public interface UserRepository extends JpaRepository<User, Long> {
 

@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 
 /**
  * Mapper responsible for converting {@link UserDTO} to {@link User} entities and vice versa.
+ *
+ * @author Evandro Machado
  */
 @Component
 public class UserMapper {
@@ -48,8 +50,8 @@ public class UserMapper {
      * @param dto the DTO containing updated profile information
      */
     public void updateEntity(User user, UserDTO.Update dto) {
-        user.setName(dto.name());
-        user.setEmail(dto.email());
+        dto.name().ifPresent(user::setName);
+        dto.email().ifPresent(user::setEmail);
     }
 
 }

@@ -14,11 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Service responsible for managing {@link User}- related business operations.
  * Handles validation, persistence coordination and DTO/entity transformations.
+ *
+ * @author Evandro Machado
  */
 @Service
 @RequiredArgsConstructor
@@ -86,7 +87,9 @@ public class UserService {
      */
     @Transactional
     public UserDTO.Response updateUser(Long id, UserDTO.Update dto) {
-        validateEmailUniqueness(dto.email(), id);
+        if (dto.email().isPresent()) {
+            validateEmailUniqueness(String.valueOf(dto.email()), id);
+        }
 
         User existingUser = findEntityById(id);
 

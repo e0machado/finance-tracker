@@ -13,6 +13,8 @@ import java.util.List;
 /**
  * REST controller responsible for handling {@link com.ems.finance_tracker.model.entity.User}- related HTTP requests.
  * Provides CRUD operations for users.
+ *
+ * @author Evandro Machado
  */
 @RestController
 @RequestMapping("/users")
@@ -28,7 +30,7 @@ public class UserController {
      * @return HTTP 200 OK with a list of {@link UserDTO.Response} representing all users
      */
     @GetMapping
-    public ResponseEntity<List<UserDTO.Response>> findAllUsers() {
+    public ResponseEntity<List<UserDTO.Response>> findAll() {
         return ResponseEntity.ok(userService.findAllUsers());
     }
 
@@ -40,7 +42,7 @@ public class UserController {
      * @throws com.ems.finance_tracker.exception.ResourceNotFoundException if the user does not exist
      */
     @GetMapping("/{id}")
-    public ResponseEntity<UserDTO.Response> findUserById(@PathVariable Long id) {
+    public ResponseEntity<UserDTO.Response> findById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.findUserById(id));
     }
 
@@ -52,7 +54,7 @@ public class UserController {
      * @throws com.ems.finance_tracker.exception.BusinessException if the email is already in use
      */
     @PostMapping
-    public ResponseEntity<UserDTO.Response> createUser(@Valid @RequestBody UserDTO.Request dto) {
+    public ResponseEntity<UserDTO.Response> create(@Valid @RequestBody UserDTO.Request dto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(userService.saveUser(dto));
     }
@@ -67,7 +69,7 @@ public class UserController {
      * @throws com.ems.finance_tracker.exception.BusinessException if the email is already in use by another user
      */
     @PutMapping("/{id}")
-    public ResponseEntity<UserDTO.Response> updateUser(@PathVariable Long id, @Valid @RequestBody UserDTO.Update dto) {
+    public ResponseEntity<UserDTO.Response> update(@PathVariable Long id, @Valid @RequestBody UserDTO.Update dto) {
         return ResponseEntity.ok(userService.updateUser(id, dto));
     }
 
@@ -79,7 +81,7 @@ public class UserController {
      * @throws com.ems.finance_tracker.exception.ResourceNotFoundException if the user does not exist
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
