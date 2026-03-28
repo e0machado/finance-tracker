@@ -8,14 +8,32 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
 
+/**
+ * Interface encapsulating {@link com.ems.finance_tracker.model.entity.CreditCardTransaction}-related
+ * Data Transfer Objects (DTOs).
+ *
+ * @author Evandro Machado
+ */
 public interface CreditCardTransactionDTO {
 
+    /**
+     * Reference DTO representing a {@link com.ems.finance_tracker.model.entity.CreditCard} by its identifier.
+     */
     record CreditCardRef(@NotNull Long id) {}
 
+    /**
+     * Reference DTO representing a {@link com.ems.finance_tracker.model.entity.Category} by its identifier.
+     */
     record CategoryRef(@NotNull Long id) {}
 
+    /**
+     * Reference DTO representing a {@link com.ems.finance_tracker.model.entity.CreditCardStatement} by its identifier.
+     */
     record CreditCardStatementRef(@NotNull Long id) {}
 
+    /**
+     * DTO used for credit card transaction creation requests.
+     */
     @Schema(name = "CreditCardTransactionRequest")
     record Request(
             @NotBlank
@@ -83,6 +101,9 @@ public interface CreditCardTransactionDTO {
         }
     }
 
+    /**
+     * DTO used in API responses representing the credit card transaction data.
+     */
     @Schema(name = "CreditCardTransactionResponse")
     record Response(
             Long id,
@@ -99,6 +120,9 @@ public interface CreditCardTransactionDTO {
             CreditCardStatementRef statement
     ) {}
 
+    /**
+     * DTO used for updating credit card transaction information.
+     */
     @Schema(name = "CreditCardTransactionUpdate")
     record Update(
             @Size(max = 50)

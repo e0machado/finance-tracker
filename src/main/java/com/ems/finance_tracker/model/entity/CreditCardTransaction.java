@@ -3,13 +3,13 @@ package com.ems.finance_tracker.model.entity;
 import com.ems.finance_tracker.exception.BusinessException;
 import com.ems.finance_tracker.model.enums.CreditCardTransactionType;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
+        import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-import java.math.BigDecimal;
+        import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /**
@@ -91,6 +91,9 @@ public class CreditCardTransaction {
     @JoinColumn(name = "statement_id", nullable = false)
     private CreditCardStatement creditCardStatement;
 
+    // TODO: Restrict setters on installment fields (isInstallment, currentInstallment, totalInstallments)
+    // and expose explicit domain methods (e.g. configureAsInstallment, configureAsSingleInstallment)
+    // to prevent invalid state mutations and align with the rich domain model adopted in CreditCard.
     @PrePersist
     @PreUpdate
     private void validate() {
