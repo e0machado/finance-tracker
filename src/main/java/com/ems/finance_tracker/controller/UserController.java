@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * REST controller responsible for handling {@link com.ems.finance_tracker.model.entity.User}- related HTTP requests.
+ * REST controller responsible for handling {@link com.ems.finance_tracker.model.entity.User}
+ * related HTTP requests.
  * Provides CRUD operations for users.
  *
  * @author Evandro Machado
@@ -19,7 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "${cors.allowed-origins}")
 public class UserController {
 
     private final UserService userService;
@@ -68,7 +69,7 @@ public class UserController {
      * @throws com.ems.finance_tracker.exception.ResourceNotFoundException if the user does not exist
      * @throws com.ems.finance_tracker.exception.BusinessException if the email is already in use by another user
      */
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<UserDTO.Response> update(@PathVariable Long id, @Valid @RequestBody UserDTO.Update dto) {
         return ResponseEntity.ok(userService.updateUser(id, dto));
     }

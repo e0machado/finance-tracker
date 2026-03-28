@@ -12,9 +12,9 @@ import java.util.Set;
 
 /**
  * Entity representing a User within the financial tracking system.
- * <br>
- * Each user has a name, email, an encrypted password hash, and access permissions
- * based on assigned roles.
+ *
+ * <p>Each user has a name, email, an encrypted password hash, and access permissions
+ * based on assigned roles.</p>
  *
  * @author Evandro Machado
  */

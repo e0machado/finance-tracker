@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Service responsible for managing {@link User}- related business operations.
+ * Service responsible for managing {@link User} business operations.
  * Handles validation, persistence coordination and DTO/entity transformations.
  *
  * @author Evandro Machado
@@ -57,7 +57,7 @@ public class UserService {
     /**
      * Creates and persists a new user.
      * Applies business rules such as email uniqueness validation,
-     * password encryption and default role assignment when none is provided.
+     * password encryption and default role assignment.
      *
      * @param dto the user creation request data
      * @return a {@link UserDTO.Response} representing the persisted user
@@ -69,9 +69,7 @@ public class UserService {
 
         String hash = passwordEncoder.encode(dto.password());
         User user = userMapper.toEntity(dto, hash);
-        if (user.getRoles() == null || user.getRoles().isEmpty()) {
-            user.setRoles(Collections.singleton(Role.ROLE_USER));
-        }
+        user.setRoles(Collections.singleton(Role.ROLE_USER));
 
         return userMapper.toResponse(userRepository.save(user));
     }
@@ -88,7 +86,7 @@ public class UserService {
     @Transactional
     public UserDTO.Response updateUser(Long id, UserDTO.Update dto) {
         if (dto.email().isPresent()) {
-            validateEmailUniqueness(String.valueOf(dto.email()), id);
+            validateEmailUniqueness(dto.email().get(), id);
         }
 
         User existingUser = findEntityById(id);
@@ -131,24 +129,10 @@ public class UserService {
      */
     private void validateEmailUniqueness(String email, Long userId) {
         userRepository.findByEmail(email)
-                .filter(u -> userId == null || !u.getId().equals(userId))
-                .ifPresent(u -> {
-                    throw new BusinessException("Email already in use");
+                .filter(existing -> userId == null || !existing.getId().equals(userId))
+                .ifPresent(existing -> {
+                    throw new BusinessException("Email already in use.");
                 });
-
-        /*
-        If-based alternative:
-
-        Optional<User> optionalUser = userRepository.findByEmail(email);
-
-        if (optionalUser.isPresent()) {
-            User u = optionalUser.get();
-            if (userId == null || !u.getId().equals(userId)) {
-                throw new BusinessException("Email already in use");
-            }
-        }
-
-        */
     }
 
 }

@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * Interface for {@link User}- related Data Transfer Objects (DTOs).
+ * Interface encapsulating {@link User}-related Data Transfer Objects (DTOs).
  *
  * @author Evandro Machado
  */
