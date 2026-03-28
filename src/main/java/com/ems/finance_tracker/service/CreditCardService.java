@@ -14,8 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * Service responsible for managing {@link CreditCard}- related business operations.
+ * Service responsible for managing {@link CreditCard} business operations.
  * Handles validation, persistence coordination and DTO/entity transformations.
+ *
+ * @author Evandro Machado
  */
 @Service
 @RequiredArgsConstructor
@@ -32,6 +34,8 @@ public class CreditCardService {
      * registered credit cards
      */
     public List<CreditCardDTO.Response> findAllCreditCards() {
+        // TODO: Replace findAll() with a user-scoped query once Spring Security is fully configured.
+        // Each user should only be able to retrieve their own credit cards.
         return creditCardRepository.findAll()
                 .stream()
                 .map(creditCardMapper::toResponse)
@@ -61,8 +65,8 @@ public class CreditCardService {
      */
     @Transactional
     public CreditCardDTO.Response saveCreditCard(CreditCardDTO.Request dto) {
-        User user = userRepository.findById(dto.userId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found. ID = " + dto.userId()));
+        User user = userRepository.findById(dto.user().id())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found. ID = " + dto.user().id()));
 
         CreditCard creditCard = creditCardMapper.toEntity(dto, user);
 
@@ -80,6 +84,13 @@ public class CreditCardService {
     @Transactional
     public CreditCardDTO.Response updateCreditCard(Long id, CreditCardDTO.Update dto) {
         CreditCard existingCreditCard = findEntityById(id);
+
+        if (dto.closingDay().isPresent() || dto.dueDay().isPresent()) {
+            existingCreditCard.updateBillingCycle(
+                    dto.closingDay().orElse(existingCreditCard.getClosingDay()),
+                    dto.dueDay().orElse(existingCreditCard.getDueDay())
+            );
+        }
 
         creditCardMapper.updateEntity(existingCreditCard, dto);
 

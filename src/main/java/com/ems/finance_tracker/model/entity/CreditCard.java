@@ -48,12 +48,14 @@ public class CreditCard {
     @NotNull
     @Min(1)
     @Max(31)
+    @Setter(AccessLevel.NONE)
     @Column(name = "closing_day", nullable = false)
     private Integer closingDay;
 
     @NotNull
     @Min(1)
     @Max(31)
+    @Setter(AccessLevel.NONE)
     @Column(name = "due_day", nullable = false)
     private Integer dueDay;
 
@@ -133,21 +135,30 @@ public class CreditCard {
         this.availableLimit = this.availableLimit.add(amount);
     }
 
-    public void increaseCreditLimit(BigDecimal amount) {
-        validateAmount(amount);
+    public void updateCreditLimit(BigDecimal newLimit) {
+        validateAmount(newLimit);
+        BigDecimal usedLimit = creditLimit.subtract(availableLimit);
 
-        this.creditLimit = this.creditLimit.add(amount);
-        this.availableLimit = this.availableLimit.add(amount);
-    }
-
-    public void decreaseCreditLimit(BigDecimal amount) {
-        validateAmount(amount);
-        if (amount.compareTo(availableLimit) > 0) {
-            throw new BusinessException("Cannot reduce more than available limit.");
+        if (newLimit.compareTo(usedLimit) < 0) {
+            throw new BusinessException("Cannot reduce credit limit below used amount.");
         }
 
-        this.creditLimit = this.creditLimit.subtract(amount);
-        this.availableLimit = this.availableLimit.subtract(amount);
+        BigDecimal difference = newLimit.subtract(creditLimit);
+        this.availableLimit = this.availableLimit.add(difference);
+        this.creditLimit = newLimit;
+    }
+
+    public void updateBillingCycle(Integer closingDay, Integer dueDay) {
+        if (closingDay == null || dueDay == null) {
+            throw new BusinessException("Closing day and due day are required.");
+        }
+
+        if (Objects.equals(closingDay, dueDay)) {
+            throw new BusinessException("Closing day and due day must not be equal.");
+        }
+
+        this.closingDay = closingDay;
+        this.dueDay = dueDay;
     }
 
     @Override

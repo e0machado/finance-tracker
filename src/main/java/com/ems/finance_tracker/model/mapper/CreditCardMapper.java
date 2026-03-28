@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 
 /**
  * Mapper responsible for converting {@link CreditCardDTO} to {@link CreditCard} entities and vice versa.
+ *
+ * @author Evandro Machado
  */
 @Component
 public class CreditCardMapper {
@@ -20,14 +22,15 @@ public class CreditCardMapper {
      * @return a new credit card entity ready for persistence
      */
     public CreditCard toEntity(CreditCardDTO.Request dto, User user) {
-        return CreditCard.builder()
-                .name(dto.name())
-                .creditLimit(dto.creditLimit())
-                .closingDay(dto.closingDay())
-                .dueDay(dto.dueDay())
-                .currentBalance(dto.currentBalance())
-                .user(user)
-                .build();
+        return CreditCard.of(
+                        dto.name(),
+                        dto.creditLimit(),
+                        dto.closingDay(),
+                        dto.dueDay(),
+                        dto.availableLimit(),
+                        user
+                );
+
     }
 
     /**
@@ -43,8 +46,11 @@ public class CreditCardMapper {
                 creditCard.getCreditLimit(),
                 creditCard.getClosingDay(),
                 creditCard.getDueDay(),
-                creditCard.getCurrentBalance(),
-                creditCard.getUser().getId()
+                creditCard.getAvailableLimit(),
+                new CreditCardDTO.UserRef(
+                        creditCard.getUser().getId(),
+                        creditCard.getUser().getName()
+                )
         );
     }
 
@@ -56,9 +62,7 @@ public class CreditCardMapper {
      * @param dto the DTO containing updated profile information
      */
     public void updateEntity(CreditCard creditCard, CreditCardDTO.Update dto) {
-        creditCard.setName(dto.name());
-        creditCard.setCreditLimit(dto.creditLimit());
-        creditCard.setClosingDay(dto.closingDay());
-        creditCard.setDueDay(dto.dueDay());
+        dto.name().ifPresent(creditCard::setName);
+        dto.creditLimit().ifPresent(creditCard::updateCreditLimit);
     }
 }

@@ -11,13 +11,16 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * REST controller responsible for handling {@link com.ems.finance_tracker.model.entity.CreditCard}- related HTTP requests.
+ * REST controller responsible for handling {@link com.ems.finance_tracker.model.entity.CreditCard}
+ * related HTTP requests.
  * Provides CRUD operations for credit cards.
+ *
+ * @author Evandro Machado
  */
 @RestController
 @RequestMapping("/credit-cards")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "${cors.allowed-origins}")
 public class CreditCardController {
 
     private final CreditCardService creditCardService;
@@ -29,7 +32,7 @@ public class CreditCardController {
      * @return HTTP 200 OK with a list of {@link CreditCardDTO.Response} representing all credit cards
      */
     @GetMapping
-    public ResponseEntity<List<CreditCardDTO.Response>> findAllCreditCards() {
+    public ResponseEntity<List<CreditCardDTO.Response>> findAll() {
         return ResponseEntity.ok(creditCardService.findAllCreditCards());
     }
 
@@ -41,7 +44,7 @@ public class CreditCardController {
      * @throws com.ems.finance_tracker.exception.ResourceNotFoundException if the credit card does not exist
      */
     @GetMapping("/{id}")
-    public ResponseEntity<CreditCardDTO.Response> findCreditCardById(@PathVariable Long id) {
+    public ResponseEntity<CreditCardDTO.Response> findById(@PathVariable Long id) {
         return ResponseEntity.ok(creditCardService.findCreditCardById(id));
     }
 
@@ -53,7 +56,7 @@ public class CreditCardController {
      * @throws com.ems.finance_tracker.exception.ResourceNotFoundException if the associated user is not found
      */
     @PostMapping
-    public ResponseEntity<CreditCardDTO.Response> createCreditCard(@Valid @RequestBody CreditCardDTO.Request dto) {
+    public ResponseEntity<CreditCardDTO.Response> create(@Valid @RequestBody CreditCardDTO.Request dto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(creditCardService.saveCreditCard(dto));
     }
@@ -66,8 +69,8 @@ public class CreditCardController {
      * @return HTTP 200 OK with a {@link CreditCardDTO.Response} representing the updated credit card
      * @throws com.ems.finance_tracker.exception.ResourceNotFoundException if the credit card does not exist
      */
-    @PutMapping("/{id}")
-    public ResponseEntity<CreditCardDTO.Response> updateCreditCard(@PathVariable Long id, @Valid @RequestBody CreditCardDTO.Update dto) {
+    @PatchMapping("/{id}")
+    public ResponseEntity<CreditCardDTO.Response> update(@PathVariable Long id, @Valid @RequestBody CreditCardDTO.Update dto) {
         return ResponseEntity.ok(creditCardService.updateCreditCard(id, dto));
     }
 
@@ -79,7 +82,7 @@ public class CreditCardController {
      * @throws com.ems.finance_tracker.exception.ResourceNotFoundException if the credit card does not exist
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCreditCard(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         creditCardService.deleteCreditCard(id);
         return ResponseEntity.noContent().build();
     }
