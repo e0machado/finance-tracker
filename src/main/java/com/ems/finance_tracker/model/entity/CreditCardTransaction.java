@@ -150,19 +150,29 @@ public class CreditCardTransaction {
     }
 
     /**
-     * Returns the signed amount of the transaction based on its type.
+     * Applies the financial impact of this transaction to the associated credit card.
      * <p>
-     * Income transactions return a positive value,
-     * while expense transactions return a negative value.
+     * The behavior depends on the transaction type — purchases reduce the available limit,
+     * while refunds restore it.
      * </p>
      *
-     * @return the signed {@link BigDecimal} amount
+     * @see CreditCardTransactionType#apply(BigDecimal, CreditCard)
      */
-    @Transient
-    public BigDecimal getSignedAmount() {
-        if (type == null) return amount;
+    public void applyImpact() {
+        type.apply(amount, creditCard);
+    }
 
-        return type.isIncome() ? amount : amount.negate();
+    /**
+     * Reverts the financial impact of this transaction on the associated credit card.
+     * <p>
+     * Used before updating or deleting a transaction to restore the credit card's
+     * available limit to its previous state.
+     * </p>
+     *
+     * @see CreditCardTransactionType#revert(BigDecimal, CreditCard)
+     */
+    public void revertImpact() {
+        type.revert(amount, creditCard);
     }
 
     @Override
