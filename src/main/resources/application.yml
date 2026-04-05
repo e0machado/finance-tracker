@@ -2,7 +2,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/finance_tracker
     username: postgres
-    password: 123123
+    password: ${DB_PASSWORD}
   jpa:
     show-sql: true
     hibernate:
@@ -26,3 +26,6 @@ security:
     prefix: "Bearer "
     key: "${JWT_SECRET}"
     expiration: 3600000
+
+cors:
+  allowed-origins: http://localhost:5173
