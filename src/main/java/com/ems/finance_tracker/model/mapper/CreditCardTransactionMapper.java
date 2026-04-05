@@ -3,7 +3,6 @@ package com.ems.finance_tracker.model.mapper;
 import com.ems.finance_tracker.dto.CreditCardTransactionDTO;
 import com.ems.finance_tracker.model.entity.Category;
 import com.ems.finance_tracker.model.entity.CreditCard;
-import com.ems.finance_tracker.model.entity.CreditCardStatement;
 import com.ems.finance_tracker.model.entity.CreditCardTransaction;
 import org.springframework.stereotype.Component;
 
@@ -24,14 +23,12 @@ public class CreditCardTransactionMapper {
      * @param dto the credit card transaction creation request data
      * @param creditCard the credit card associated with the transaction
      * @param category the category associated with the transaction
-     * @param statement the credit card statement associated with the transaction
      * @return a new CreditCardTransaction entity ready for persistence
      */
     public CreditCardTransaction toEntity(
             CreditCardTransactionDTO.Request dto,
             CreditCard creditCard,
-            Category category,
-            CreditCardStatement statement
+            Category category
     ) {
         return CreditCardTransaction.builder()
                 .description(dto.description())
@@ -44,7 +41,6 @@ public class CreditCardTransactionMapper {
                 .comment(dto.comment())
                 .creditCard(creditCard)
                 .category(category)
-                .creditCardStatement(statement)
                 .build();
     }
 

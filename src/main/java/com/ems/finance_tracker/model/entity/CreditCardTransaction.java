@@ -86,7 +86,6 @@ public class CreditCardTransaction {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "statement_id", nullable = false)
     private CreditCardStatement creditCardStatement;

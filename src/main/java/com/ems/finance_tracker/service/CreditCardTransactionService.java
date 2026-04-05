@@ -81,7 +81,7 @@ public class CreditCardTransactionService {
         CreditCardStatement creditCardStatement = creditCardStatementRepository.findById(dto.statement().id())
                 .orElseThrow(() -> new ResourceNotFoundException("Statement not found. ID = " + dto.statement().id()));
 
-        CreditCardTransaction transaction = creditCardTransactionMapper.toEntity(dto, creditCard, category, creditCardStatement);
+        CreditCardTransaction transaction = creditCardTransactionMapper.toEntity(dto, creditCard, category);
 
         transaction.applyImpact();
         creditCardStatement.addTransaction(transaction);
