@@ -69,6 +69,13 @@ public class CreditCardStatement {
         validateDays();
     }
 
+    /**
+     * Validates that closing day and due day are within the valid range
+     * for the reference month and that due day is after closing day.
+     *
+     * @throws BusinessException if either day is out of range or due day
+     *                           is not after closing day
+     */
     private void validateDays() {
         int maxDay = referenceMonth.lengthOfMonth();
         if (closingDay < 1 || closingDay > maxDay) {

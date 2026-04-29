@@ -70,6 +70,21 @@ public class CreditCard {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    /**
+     * Factory method for creating a new {@link CreditCard} instance.
+     * <p>
+     * If {@code availableLimit} is not provided, it defaults to {@code creditLimit},
+     * assuming the card has no outstanding balance at the time of creation.
+     * </p>
+     *
+     * @param name the card name
+     * @param creditLimit the total credit limit
+     * @param closingDay the billing cycle closing day
+     * @param dueDay the billing cycle due day
+     * @param availableLimit the current available limit, or {@code null} to default to {@code creditLimit}
+     * @param user the owner of the credit card
+     * @return a new {@link CreditCard} instance ready for persistence
+     */
     public static CreditCard of(
             String name,
             BigDecimal creditLimit,
@@ -95,18 +110,35 @@ public class CreditCard {
         validateAvailableLimit();
     }
 
+    /**
+     * Validates that closing day and due day are not equal.
+     *
+     * @throws BusinessException if closing day and due day are equal
+     */
     private void validateDays() {
         if (Objects.equals(closingDay, dueDay)) {
             throw new BusinessException("Closing day and due day must not be equal.");
         }
     }
 
+    /**
+     * Validates that the available limit does not exceed the credit limit.
+     *
+     * @throws BusinessException if available limit is greater than credit limit
+     */
     private void validateAvailableLimit() {
         if (availableLimit.compareTo(creditLimit) > 0) {
             throw new BusinessException("Available limit must not be greater than credit limit.");
         }
     }
 
+    /**
+     * Validates that the given amount is not null, zero or negative.
+     *
+     * @param amount the amount to validate
+     * @throws NullPointerException if the amount is null
+     * @throws BusinessException if the amount is zero or negative
+     */
     private void validateAmount(BigDecimal amount) {
         Objects.requireNonNull(amount, "Amount must not be null.");
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
@@ -114,6 +146,13 @@ public class CreditCard {
         }
     }
 
+    /**
+     * Debits the given amount from the available limit of this credit card.
+     *
+     * @param amount the amount to debit
+     * @throws BusinessException if the amount is null, zero or negative,
+     *                           or if it exceeds the available limit
+     */
     public void addDebit(BigDecimal amount) {
         validateAmount(amount);
 
@@ -124,6 +163,16 @@ public class CreditCard {
         this.availableLimit = this.availableLimit.subtract(amount);
     }
 
+    /**
+     * Credits the given amount back to the available limit of this credit card.
+     * <p>
+     * The amount cannot exceed the currently used limit.
+     * </p>
+     *
+     * @param amount the amount to credit
+     * @throws BusinessException if the amount is null, zero or negative,
+     *                           or if it exceeds the used limit
+     */
     public void addCredit(BigDecimal amount) {
         validateAmount(amount);
         BigDecimal usedLimit = creditLimit.subtract(availableLimit);
@@ -135,6 +184,17 @@ public class CreditCard {
         this.availableLimit = this.availableLimit.add(amount);
     }
 
+    /**
+     * Updates the credit limit of this credit card and adjusts the available limit accordingly.
+     * <p>
+     * The new limit cannot be lower than the currently used amount.
+     * The difference between the new and old limit is applied directly to the available limit.
+     * </p>
+     *
+     * @param newLimit the new credit limit value
+     * @throws BusinessException if the new limit is null, zero or negative,
+     *                           or if it would fall below the currently used amount
+     */
     public void updateCreditLimit(BigDecimal newLimit) {
         validateAmount(newLimit);
         BigDecimal usedLimit = creditLimit.subtract(availableLimit);
@@ -148,6 +208,18 @@ public class CreditCard {
         this.creditLimit = newLimit;
     }
 
+    /**
+     * Updates the billing cycle of this credit card atomically.
+     * <p>
+     * Both {@code closingDay} and {@code dueDay} must be provided and must not be equal.
+     * This method ensures the billing cycle is always updated as a single consistent operation,
+     * preventing intermediate invalid states.
+     * </p>
+     *
+     * @param closingDay the new closing day of the billing cycle
+     * @param dueDay the new due day of the billing cycle
+     * @throws BusinessException if either value is null or if both values are equal
+     */
     public void updateBillingCycle(Integer closingDay, Integer dueDay) {
         if (closingDay == null || dueDay == null) {
             throw new BusinessException("Closing day and due day are required.");
